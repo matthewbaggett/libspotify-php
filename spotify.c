@@ -24,6 +24,7 @@ OTHER DEALINGS IN THE SOFTWARE.
 */
 
 #include "php_spotify.h"
+#include "string.h"
 
 zend_class_entry *spotify_ce;
 zend_object_handlers spotify_object_handlers;
@@ -48,9 +49,9 @@ static sp_session_callbacks callbacks = {
 PHP_METHOD(Spotify, __construct)
 {
 	zval *object = getThis();
-	zval *z_key, *z_user, *z_pass;
+	zval *z_key, *z_user, *z_pass, *z_cache_location, *z_settings_location, *z_user_agent;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzz", &z_key, &z_user, &z_pass) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzz", &z_key, &z_user, &z_pass, &z_cache_location, &z_settings_location, &z_user_agent) == FAILURE) {
 		return;
 	}
 
@@ -61,13 +62,14 @@ PHP_METHOD(Spotify, __construct)
 	long key_size;
 	char *key_filename;
 
+
 	spotify_object *obj = (spotify_object*)zend_object_store_get_object(object TSRMLS_CC);
 
 	memset(&config, 0, sizeof(config));
 	config.api_version = SPOTIFY_API_VERSION;
-	config.cache_location = "tmp";
-	config.settings_location = "tmp";
-	config.user_agent = "libspotify-php";
+	config.cache_location = Z_STRVAL_P(z_cache_location);
+	config.settings_location = Z_STRVAL_P(z_settings_location);
+	config.user_agent = Z_STRVAL_P(z_user_agent);
 
 	key_filename = Z_STRVAL_P(z_key);
 
@@ -103,8 +105,8 @@ PHP_METHOD(Spotify, __construct)
 
 	error = sp_session_create(&config, &session);
 	if (SP_ERROR_OK != error) {
-		error_string = strcat("Unable to create session: ", sp_error_message(error));
-		zend_throw_exception((zend_class_entry*)zend_exception_get_default(), error_string, 0 TSRMLS_CC);
+
+		zend_throw_exception((zend_class_entry*)zend_exception_get_default(), sp_error_message(error), 0 TSRMLS_CC);
 		return;
 	}
 
