@@ -51,7 +51,7 @@ PHP_METHOD(Spotify, __construct)
 	zval *object = getThis();
 	zval *z_key, *z_user, *z_pass, *z_cache_location, *z_settings_location, *z_user_agent;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzz", &z_key, &z_user, &z_pass, &z_cache_location, &z_settings_location, &z_user_agent) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "zzzzzz", &z_key, &z_user, &z_pass, &z_cache_location, &z_settings_location, &z_user_agent) == FAILURE) {
 		return;
 	}
 
