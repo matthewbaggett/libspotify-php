@@ -62,7 +62,6 @@ PHP_METHOD(Spotify, __construct)
 	long key_size;
 	char *key_filename;
 
-
 	spotify_object *obj = (spotify_object*)zend_object_store_get_object(object TSRMLS_CC);
 
 	memset(&config, 0, sizeof(config));
@@ -111,6 +110,8 @@ PHP_METHOD(Spotify, __construct)
 	}
 
 	sp_session_login(session, Z_STRVAL_P(z_user), Z_STRVAL_P(z_pass));
+		//zend_throw_exception((zend_class_entry*)zend_exception_get_default(), "Credentials invalid", 0 TSRMLS_CC);
+
 
 	obj->session = session;
 	obj->timeout = 0;
